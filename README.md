@@ -1,4 +1,2 @@
-# C-REX
-Code for 'Improving Contrastive Learning for Referring Expression Counting'
-
-Code will be updated soon™.
+# What is the Right Embedding Space for Contrastive Learning in Referring Expression Counting? [ECCV 2026]
+[[arXiv](https://arxiv.org/abs/2505.22850)]
