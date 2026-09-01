@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.so
+build/
+dist/
+*.egg-info/
+runs/
+exp/
+data/
+*.pth
+.DS_Store
