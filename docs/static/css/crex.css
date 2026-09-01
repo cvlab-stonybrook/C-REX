@@ -1,11 +1,25 @@
 /* C-REX project page — additions on top of the template's index.css */
 
+/* Stony Brook red. #990000 is sampled straight from the university's vector
+   logo, so it is the exact brand red rather than an approximation.
+   The --primary-color, --primary-hover and --gradient-accent vars below belong to the template's
+   index.css; redefining them here (this sheet loads later) recolours every
+   accent it drives: author links, footer links, the Copy button, the
+   scroll-to-top button, carousel dots, focus rings and heading underlines. */
 :root {
-  --crex-accent: #1f6feb;
-  --crex-good: #157347;
-  --crex-bad: #9a3412;
+  --sbu-red: #990000;
+  --sbu-red-dark: #7a0000;
+
+  --primary-color: var(--sbu-red);
+  --primary-hover: var(--sbu-red-dark);
+  --accent-color: var(--sbu-red);
+  --gradient-accent: linear-gradient(135deg, #990000 0%, #b83a3a 100%);
+
+  --crex-accent: var(--sbu-red);
   --crex-rule: #e3e6ea;
   --crex-muted: #667085;
+  /* Deliberately NOT the Stony Brook red: in a results table a red row reads
+     as a bad result. The C-REX rows are the winning ones, so they stay blue. */
   --crex-highlight: #eef4ff;
 }
 
@@ -399,3 +413,17 @@ pre, code, pre code, #bibtex-code, #bibtex-code code {
 /* SF is a touch tighter than Inter at display sizes. */
 .publication-title { letter-spacing: -0.021em; }
 .title.is-3 { letter-spacing: -0.015em; }
+
+/* bulma-carousel's own .slider-pagination .slider-page rule loads after
+   index.css, so the template's colour never applied and the dots rendered
+   white on a near-white background. Three classes outrank it regardless of
+   order. */
+.results-carousel .slider-pagination .slider-page {
+  background: #dcc9c9;
+  box-shadow: none;
+  opacity: 1;
+}
+.results-carousel .slider-pagination .slider-page.is-active,
+.results-carousel .slider-pagination .slider-page:hover {
+  background: var(--sbu-red);
+}
