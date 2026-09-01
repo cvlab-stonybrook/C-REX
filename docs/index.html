@@ -1,11 +1,844 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Empty Page</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Primary Meta Tags -->
+  <meta name="title" content="What is the Right Embedding Space for Contrastive Learning in Referring Expression Counting? - Triaridis, Kaliosis et al.">
+  <meta name="description" content="C-REX performs contrastive learning entirely in the visual embedding space for Referring Expression Counting, improving MAE by up to 28% and RMSE by 24.5% as a plug-in module for any REC model.">
+  <meta name="keywords" content="referring expression counting, contrastive learning, representation learning, object counting, class-agnostic counting, open-world counting, computer vision, ECCV 2026">
+  <meta name="author" content="Kostas Triaridis, Panagiotis Kaliosis, E-Ro Nguyen, Jingyi Xu, Dimitris Samaras, Hieu Le">
+  <meta name="robots" content="index, follow">
+  <meta name="language" content="English">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Computer Vision Lab, Stony Brook University">
+  <meta property="og:title" content="What is the Right Embedding Space for Contrastive Learning in Referring Expression Counting?">
+  <meta property="og:description" content="C-REX performs contrastive learning entirely in the visual embedding space for Referring Expression Counting, improving MAE by up to 28% and RMSE by 24.5% as a plug-in module for any REC model.">
+  <meta property="og:url" content="https://cvlab-stonybrook.github.io/C-REX/">
+  <meta property="og:image" content="https://cvlab-stonybrook.github.io/C-REX/static/images/teaser_eccv.jpg">
+  <meta property="og:image:alt" content="C-REX: image-text versus image-only contrastive learning in the visual embedding space">
+  <meta property="article:author" content="Kostas Triaridis">
+  <meta property="article:section" content="Research">
+  <meta property="article:tag" content="Referring Expression Counting">
+  <meta property="article:tag" content="Contrastive Learning">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="What is the Right Embedding Space for Contrastive Learning in Referring Expression Counting?">
+  <meta name="twitter:description" content="C-REX performs contrastive learning entirely in the visual embedding space for Referring Expression Counting, improving MAE by up to 28% and RMSE by 24.5%.">
+  <meta name="twitter:image" content="https://cvlab-stonybrook.github.io/C-REX/static/images/teaser_eccv.jpg">
+  <meta name="twitter:image:alt" content="C-REX: image-text versus image-only contrastive learning in the visual embedding space">
+
+  <!-- Academic/Research Specific -->
+  <meta name="citation_title" content="What is the Right Embedding Space for Contrastive Learning in Referring Expression Counting?">
+  <meta name="citation_author" content="Triaridis, Kostas">
+  <meta name="citation_author" content="Kaliosis, Panagiotis">
+  <meta name="citation_author" content="Nguyen, E-Ro">
+  <meta name="citation_author" content="Xu, Jingyi">
+  <meta name="citation_author" content="Samaras, Dimitris">
+  <meta name="citation_author" content="Le, Hieu">
+  <meta name="citation_publication_date" content="2026">
+  <meta name="citation_conference_title" content="European Conference on Computer Vision (ECCV)">
+  <meta name="citation_arxiv_id" content="2505.22850">
+  <meta name="citation_pdf_url" content="https://arxiv.org/pdf/2505.22850">
+
+  <!-- Additional SEO -->
+  <meta name="theme-color" content="#1f6feb">
+  <meta name="msapplication-TileColor" content="#1f6feb">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+  <!-- Preconnect for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://ajax.googleapis.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+  <title>C-REX &middot; What is the Right Embedding Space for Contrastive Learning in Referring Expression Counting? (ECCV 2026)</title>
+
+  <!-- Favicon and App Icons -->
+  <!-- favicon.ico uses BMP-encoded entries, not PNG-compressed ones: Safari does not
+       reliably render PNG-in-ICO. The explicit 16/32 PNGs are what Safari actually picks.
+       ?v= bumps the URL so browsers drop a cached icon; raise it if the icon changes. -->
+  <link rel="icon" href="static/images/favicon.ico?v=3" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="static/images/favicon-32x32.png?v=3">
+  <link rel="icon" type="image/png" sizes="16x16" href="static/images/favicon-16x16.png?v=3">
+  <link rel="icon" type="image/png" sizes="192x192" href="static/images/favicon.png?v=3">
+  <link rel="apple-touch-icon" href="static/images/apple-touch-icon.png?v=3">
+
+  <!-- Critical CSS - Load synchronously -->
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+  <!-- ?v= forces browsers (Safari especially) to pick up stylesheet changes; bump on edit. -->
+  <link rel="stylesheet" href="static/css/crex.css?v=9">
+
+  <!-- Non-critical CSS - Load asynchronously -->
+  <link rel="preload" href="static/css/bulma-carousel.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="static/css/bulma-slider.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="static/css/fontawesome.all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+  <noscript>
+    <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+    <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  </noscript>
+
+  <!-- Fonts -->
+  <!-- Inter is only the non-Apple fallback in --crex-font; Apple devices use local SF Pro. -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Deferred JavaScript -->
+  <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <!-- Required: the bundled fontawesome.all.min.css has no accompanying webfonts/
+       directory, so the JS (SVG) build is what actually renders the fa-* icons. -->
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script defer src="static/js/bulma-carousel.min.js"></script>
+  <script defer src="static/js/bulma-slider.min.js"></script>
+  <script defer src="static/js/index.js"></script>
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ScholarlyArticle",
+    "headline": "What is the Right Embedding Space for Contrastive Learning in Referring Expression Counting?",
+    "description": "C-REX is a supervised contrastive learning framework for Referring Expression Counting that operates entirely in the visual embedding space.",
+    "author": [
+      { "@type": "Person", "name": "Kostas Triaridis", "affiliation": { "@type": "Organization", "name": "Stony Brook University" } },
+      { "@type": "Person", "name": "Panagiotis Kaliosis", "affiliation": { "@type": "Organization", "name": "Stony Brook University" } },
+      { "@type": "Person", "name": "E-Ro Nguyen", "affiliation": { "@type": "Organization", "name": "Stony Brook University" } },
+      { "@type": "Person", "name": "Jingyi Xu", "affiliation": { "@type": "Organization", "name": "Stony Brook University" } },
+      { "@type": "Person", "name": "Dimitris Samaras", "affiliation": { "@type": "Organization", "name": "Stony Brook University" } },
+      { "@type": "Person", "name": "Hieu Le", "affiliation": { "@type": "Organization", "name": "UNC Charlotte" } }
+    ],
+    "datePublished": "2026",
+    "publisher": { "@type": "Organization", "name": "European Conference on Computer Vision (ECCV)" },
+    "url": "https://cvlab-stonybrook.github.io/C-REX/",
+    "image": "https://cvlab-stonybrook.github.io/C-REX/static/images/teaser_eccv.jpg",
+    "keywords": ["Referring Expression Counting", "Contrastive Learning", "Representation Learning", "Object Counting", "Computer Vision"],
+    "isAccessibleForFree": true,
+    "mainEntity": { "@type": "WebPage", "@id": "https://cvlab-stonybrook.github.io/C-REX/" }
+  }
+  </script>
 </head>
 <body>
+
+  <!-- Scroll to Top Button -->
+  <button class="scroll-to-top" onclick="scrollToTop()" title="Scroll to top" aria-label="Scroll to top">
+    <i class="fas fa-chevron-up"></i>
+  </button>
+
+  <main id="main-content">
+
+  <!-- ============================ HERO ============================ -->
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+
+            <!-- Outside .crex-hero-row so it centres on the page, not on the title block. -->
+            <div class="crex-venue-row">
+              <img class="crex-eccv-logo" src="static/images/eccv-logo.svg" width="430" height="189"
+                   alt="ECCV 2026 logo: the Malmo skyline above the text ECCV 2026, Malmo, Sept 8-12">
+            </div>
+
+            <div class="crex-hero-row">
+              <div class="crex-hero-text">
+                <h1 class="title is-1 publication-title">What is the Right Embedding Space for Contrastive Learning in Referring Expression Counting?</h1>
+              </div>
+              <img class="crex-logo" src="static/images/crex_logo.png" width="700" height="658"
+                   alt="C-REX logo: a cartoon T-rex wearing a C-REX baseball cap and glasses, using an abacus to count a pile of apples, rubber ducks, stars and building blocks">
+            </div>
+
+            <div class="is-size-5 publication-authors">
+              <span class="author-block">
+                <a href="https://orcid.org/0009-0009-5868-9596" target="_blank" rel="noopener">Kostas Triaridis</a><sup>1*</sup>,</span>
+              <span class="author-block">
+                <a href="https://orcid.org/0009-0001-7115-0431" target="_blank" rel="noopener">Panagiotis Kaliosis</a><sup>1*</sup>,</span>
+              <span class="author-block">
+                <a href="https://orcid.org/0000-0002-8450-5190" target="_blank" rel="noopener">E-Ro Nguyen</a><sup>1</sup>,</span>
+              <span class="author-block">
+                <a href="https://orcid.org/0009-0003-5597-5534" target="_blank" rel="noopener">Jingyi Xu</a><sup>1</sup>,</span>
+              <span class="author-block">
+                <a href="https://orcid.org/0000-0002-1373-0294" target="_blank" rel="noopener">Dimitris Samaras</a><sup>1</sup>,</span>
+              <span class="author-block">
+                <a href="https://orcid.org/0000-0001-7855-2778" target="_blank" rel="noopener">Hieu Le</a><sup>2</sup></span>
+            </div>
+
+            <div class="is-size-5 publication-authors">
+              <span class="author-block"><sup>1</sup>Stony Brook University &nbsp;&nbsp; <sup>2</sup>UNC Charlotte</span>
+              <span class="eql-cntrb"><small><br><sup>*</sup>Indicates equal contribution. Correspondence to
+                <a href="mailto:kostas@cs.stonybrook.edu">kostas@cs.stonybrook.edu</a></small></span>
+            </div>
+
+            <div class="column has-text-centered">
+              <div class="publication-links">
+
+                <span class="link-block">
+                  <a href="https://arxiv.org/pdf/2505.22850" target="_blank" rel="noopener"
+                     class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                    <span>Paper</span>
+                  </a>
+                </span>
+
+                <span class="link-block">
+                  <a href="https://arxiv.org/abs/2505.22850" target="_blank" rel="noopener"
+                     class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon"><i class="ai ai-arxiv"></i></span>
+                    <span>arXiv</span>
+                  </a>
+                </span>
+
+                <span class="link-block">
+                  <a href="https://github.com/cvlab-stonybrook/C-REX" target="_blank" rel="noopener"
+                     class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon"><i class="fab fa-github"></i></span>
+                    <span>Code</span>
+                  </a>
+                </span>
+
+                <span class="link-block">
+                  <a href="#BibTeX" class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon"><i class="fas fa-quote-left"></i></span>
+                    <span>BibTeX</span>
+                  </a>
+                </span>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ TEASER ============================ -->
+  <section class="hero teaser">
+    <div class="container is-max-desktop">
+      <div class="hero-body">
+        <figure class="crex-figure">
+          <img src="static/images/teaser_eccv.jpg"
+               alt="Left: a street scene with people walking, riding bicycles and riding motorcycles. Right: (a) image-text contrastive learning, where visual tokens for different referring expressions stay entangled; (b) image-only contrastive learning, where positives form a compact green cluster clearly separated from red negatives.">
+          <figcaption class="crex-caption">
+            Existing REC methods rely on image&ndash;text contrastive learning, which depends on text guidance and can introduce
+            misalignment. <b>(a)</b> Each anchor visual token (blue) is compared against positive (green) and negative (red)
+            <em>prompt text</em> embeddings. Because the image and text embedding spaces are not necessarily aligned, visual tokens
+            for different prompts can remain entangled &mdash; they are never separated directly. <b>(b)</b> We instead perform
+            <b>image-only</b> contrastive learning, directly optimizing relationships among object embeddings in the visual space.
+            This yields more compact intra-class clusters and clearer inter-class separation.
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ ABSTRACT ============================ -->
+  <section class="section hero is-light crex-abstract-section">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column">
+          <h2 class="title is-3">Abstract</h2>
+
+          <div class="content has-text-justified crex-abstract-full">
+            <p>
+              Referring Expression Counting (REC) requires distinguishing visually similar objects described by fine-grained text
+              cues. Existing methods tackle this via image-text contrastive learning of visual features which aims to distinguish
+              visual features corresponding to positive and negative referring expressions. However, this strategy relies heavily
+              on accurate image&ndash;text alignment and is constrained by the limited number of available negative expressions.
+              We argue that these limitations can be avoided by performing contrastive learning entirely in the visual embedding
+              space. To this end, we introduce <b>C-REX</b>, a simple but effective supervised contrastive learning framework that
+              learns fine-grained visual representations by contrasting visual tokens within the same image. By shifting the
+              negative samples from incorrect Referring Expressions to visual tokens from the image, C-REX vastly increases the
+              number of potential negatives, providing richer and more stable supervision. This design leads to stronger
+              fine-grained visual discrimination and better generalization across complex open-world counting settings. C-REX
+              serves as a plug-in module that can be seamlessly applied to any existing REC model without architectural changes.
+              We apply it in three different REC architectures and achieve state-of-the-art results improving by up to 28% in MAE
+              and 24.5% in RMSE. Moreover, we show that our framework is versatile and general, and can be applied to other
+              counting tasks like class-agnostic counting, improving the performance of existing models.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ METHOD ============================ -->
+  <section class="section">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3 has-text-centered">Method</h2>
+      <figure class="crex-figure">
+        <img src="static/images/method_eccv.jpg"
+             alt="(a) One image token compared against three text tokens: green arrow to 'person riding a bicycle', red arrows to 'person walking' and 'person riding a motorcycle'. (b) The same image token compared against many other image tokens, with green arrows to other cyclists and red arrows to pedestrians, motorcyclists, cars and signs.">
+        <figcaption class="crex-caption">
+          <b>(a)</b> Standard REC models distinguish visually similar but contextually distinct objects through image&ndash;text
+          contrastive learning, which falls short when the image and text embedding spaces are poorly aligned &mdash; and offers
+          only a handful of negatives, since they are drawn from the referring expressions available for that image (typically
+          fewer than four). <b>(b)</b> We operate <b>solely in the image space</b>, contrasting each matched visual token against
+          every other token in the image. This provides a much larger pool of negatives (typically in the hundreds) and a more
+          stable supervisory signal.
+        </figcaption>
+      </figure>
+
+      <div class="content crex-method-body">
+        <p>
+          C-REX replaces the image&ndash;text contrastive loss used by previous REC methods with a supervised contrastive
+          objective computed entirely among the visual tokens of a single image. Predicted points are matched to the
+          ground-truth points by bipartite matching: the matched tokens become the positive set, and every other token in the
+          image becomes a negative, so the referring expression only conditions the visual backbone and never enters the
+          contrastive objective itself. That turns a handful of text negatives into hundreds of visual ones, and because only
+          positives act as anchors, unrelated negatives are pushed away from the positives without being pulled together. Every
+          other counting loss is left unchanged, which is what makes C-REX a drop-in module for any existing REC architecture.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ QUALITATIVE ============================ -->
+  <section class="hero is-small qual-section is-light">
+    <div class="hero-body">
+      <div class="qual-container">
+        <h2 class="title is-3 has-text-centered">Qualitative Results</h2>
+        <p class="section-lead">
+          Each slide shows one referring expression. Every model is paired with its C-REX counterpart and colour-coded to match
+          the count-range chart in the results below &mdash; the darker swatch is the baseline, the lighter one is the same model trained with C-REX.
+          Image contrast is adjusted to make predictions easier to see.
+        </p>
+
+        <div id="results-carousel" class="carousel results-carousel">
+
+          <div class="item">
+            <div class="qual-slide">
+              <div class="qual-head">
+                <span class="qual-re">&ldquo;Car driving to the left&rdquo;</span>
+              </div>
+
+              <div class="qual-ref">
+                <div class="qual-pair-grid">
+                  <figure class="qual-cell is-ref">
+                    <img src="static/images/qual/car-left__image.jpg" alt="Multi-lane highway with cars travelling in both directions" loading="lazy">
+                    <figcaption><span class="qual-model">Input image</span></figcaption>
+                  </figure>
+                  <figure class="qual-cell is-ref">
+                    <img src="static/images/qual/car-left__gt.jpg" alt="Ground-truth annotation for car driving to the left" loading="lazy">
+                    <figcaption><span class="qual-model">Ground truth</span><span class="qual-count">19</span></figcaption>
+                  </figure>
+                </div>
+              </div>
+              <div class="qual-pair" data-model="grec">
+                <div class="qual-pair-grid">
+                  <figure class="qual-cell is-base">
+                    <img src="static/images/qual/car-left__grec.jpg" alt="GroundingREC prediction for car driving to the left" loading="lazy">
+                    <figcaption><span class="qual-model"><i class="qual-swatch" aria-hidden="true"></i>GroundingREC</span><span class="qual-count">24</span></figcaption>
+                  </figure>
+                  <figure class="qual-cell is-ours">
+                    <img src="static/images/qual/car-left__grec-crex.jpg" alt="GroundingREC with C-REX prediction for car driving to the left" loading="lazy">
+                    <figcaption><span class="qual-model"><i class="qual-swatch" aria-hidden="true"></i>GroundingREC + C-REX</span><span class="qual-count">20</span></figcaption>
+                  </figure>
+                </div>
+              </div>
+              <div class="qual-pair" data-model="cadgd">
+                <div class="qual-pair-grid">
+                  <figure class="qual-cell is-base">
+                    <img src="static/images/qual/car-left__cadgd.jpg" alt="CAD-GD prediction for car driving to the left" loading="lazy">
+                    <figcaption><span class="qual-model"><i class="qual-swatch" aria-hidden="true"></i>CAD-GD</span><span class="qual-count">26</span></figcaption>
+                  </figure>
+                  <figure class="qual-cell is-ours">
+                    <img src="static/images/qual/car-left__cadgd-crex.jpg" alt="CAD-GD with C-REX prediction for car driving to the left" loading="lazy">
+                    <figcaption><span class="qual-model"><i class="qual-swatch" aria-hidden="true"></i>CAD-GD + C-REX</span><span class="qual-count">19</span></figcaption>
+                  </figure>
+                </div>
+              </div>
+              <div class="qual-pair" data-model="gdino">
+                <div class="qual-pair-grid">
+                  <figure class="qual-cell is-base">
+                    <img src="static/images/qual/car-left__gdino.jpg" alt="GroundingDINO prediction for car driving to the left" loading="lazy">
+                    <figcaption><span class="qual-model"><i class="qual-swatch" aria-hidden="true"></i>GroundingDINO</span><span class="qual-count">21</span></figcaption>
+                  </figure>
+                  <figure class="qual-cell is-ours">
+                    <img src="static/images/qual/car-left__gdino-crex.jpg" alt="GroundingDINO with C-REX prediction for car driving to the left" loading="lazy">
+                    <figcaption><span class="qual-model"><i class="qual-swatch" aria-hidden="true"></i>GroundingDINO + C-REX</span><span class="qual-count">20</span></figcaption>
+                  </figure>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="item">
+            <div class="qual-slide">
+              <div class="qual-head">
+                <span class="qual-re">&ldquo;Blue car&rdquo;</span>
+              </div>
+
+              <div class="qual-ref">
+                <div class="qual-pair-grid">
+                  <figure class="qual-cell is-ref">
+                    <img src="static/images/qual/blue-car__image.jpg" alt="Aerial view of a park with a road and a few parked cars" loading="lazy">
+                    <figcaption><span class="qual-model">Input image</span></figcaption>
+                  </figure>
+                  <figure class="qual-cell is-ref">
+                    <img src="static/images/qual/blue-car__gt.jpg" alt="Ground-truth annotation for blue car" loading="lazy">
+                    <figcaption><span class="qual-model">Ground truth</span><span class="qual-count">1</span></figcaption>
+                  </figure>
+                </div>
+              </div>
+              <div class="qual-pair" data-model="grec">
+                <div class="qual-pair-grid">
+                  <figure class="qual-cell is-base">
+                    <img src="static/images/qual/blue-car__grec.jpg" alt="GroundingREC prediction for blue car" loading="lazy">
+                    <figcaption><span class="qual-model"><i class="qual-swatch" aria-hidden="true"></i>GroundingREC</span><span class="qual-count">2</span></figcaption>
+                  </figure>
+                  <figure class="qual-cell is-ours">
+                    <img src="static/images/qual/blue-car__grec-crex.jpg" alt="GroundingREC with C-REX prediction for blue car" loading="lazy">
+                    <figcaption><span class="qual-model"><i class="qual-swatch" aria-hidden="true"></i>GroundingREC + C-REX</span><span class="qual-count">1</span></figcaption>
+                  </figure>
+                </div>
+              </div>
+              <div class="qual-pair" data-model="cadgd">
+                <div class="qual-pair-grid">
+                  <figure class="qual-cell is-base">
+                    <img src="static/images/qual/blue-car__cadgd.jpg" alt="CAD-GD prediction for blue car" loading="lazy">
+                    <figcaption><span class="qual-model"><i class="qual-swatch" aria-hidden="true"></i>CAD-GD</span><span class="qual-count">0</span></figcaption>
+                  </figure>
+                  <figure class="qual-cell is-ours">
+                    <img src="static/images/qual/blue-car__cadgd-crex.jpg" alt="CAD-GD with C-REX prediction for blue car" loading="lazy">
+                    <figcaption><span class="qual-model"><i class="qual-swatch" aria-hidden="true"></i>CAD-GD + C-REX</span><span class="qual-count">1</span></figcaption>
+                  </figure>
+                </div>
+              </div>
+              <div class="qual-pair" data-model="gdino">
+                <div class="qual-pair-grid">
+                  <figure class="qual-cell is-base">
+                    <img src="static/images/qual/blue-car__gdino.jpg" alt="GroundingDINO prediction for blue car" loading="lazy">
+                    <figcaption><span class="qual-model"><i class="qual-swatch" aria-hidden="true"></i>GroundingDINO</span><span class="qual-count">2</span></figcaption>
+                  </figure>
+                  <figure class="qual-cell is-ours">
+                    <img src="static/images/qual/blue-car__gdino-crex.jpg" alt="GroundingDINO with C-REX prediction for blue car" loading="lazy">
+                    <figcaption><span class="qual-model"><i class="qual-swatch" aria-hidden="true"></i>GroundingDINO + C-REX</span><span class="qual-count">1</span></figcaption>
+                  </figure>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="item">
+            <div class="qual-slide">
+              <div class="qual-head">
+                <span class="qual-re">&ldquo;Red bottle cap&rdquo;</span>
+              </div>
+
+              <div class="qual-ref">
+                <div class="qual-pair-grid">
+                  <figure class="qual-cell is-ref">
+                    <img src="static/images/qual/red-bottle-cap__image.jpg" alt="Map of the United States made from bottle caps of many colours" loading="lazy">
+                    <figcaption><span class="qual-model">Input image</span></figcaption>
+                  </figure>
+                  <figure class="qual-cell is-ref">
+                    <img src="static/images/qual/red-bottle-cap__gt.jpg" alt="Ground-truth annotation for red bottle cap" loading="lazy">
+                    <figcaption><span class="qual-model">Ground truth</span><span class="qual-count">5</span></figcaption>
+                  </figure>
+                </div>
+              </div>
+              <div class="qual-pair" data-model="grec">
+                <div class="qual-pair-grid">
+                  <figure class="qual-cell is-base">
+                    <img src="static/images/qual/red-bottle-cap__grec.jpg" alt="GroundingREC prediction for red bottle cap" loading="lazy">
+                    <figcaption><span class="qual-model"><i class="qual-swatch" aria-hidden="true"></i>GroundingREC</span><span class="qual-count">23</span></figcaption>
+                  </figure>
+                  <figure class="qual-cell is-ours">
+                    <img src="static/images/qual/red-bottle-cap__grec-crex.jpg" alt="GroundingREC with C-REX prediction for red bottle cap" loading="lazy">
+                    <figcaption><span class="qual-model"><i class="qual-swatch" aria-hidden="true"></i>GroundingREC + C-REX</span><span class="qual-count">5</span></figcaption>
+                  </figure>
+                </div>
+              </div>
+              <div class="qual-pair" data-model="cadgd">
+                <div class="qual-pair-grid">
+                  <figure class="qual-cell is-base">
+                    <img src="static/images/qual/red-bottle-cap__cadgd.jpg" alt="CAD-GD prediction for red bottle cap" loading="lazy">
+                    <figcaption><span class="qual-model"><i class="qual-swatch" aria-hidden="true"></i>CAD-GD</span><span class="qual-count">17</span></figcaption>
+                  </figure>
+                  <figure class="qual-cell is-ours">
+                    <img src="static/images/qual/red-bottle-cap__cadgd-crex.jpg" alt="CAD-GD with C-REX prediction for red bottle cap" loading="lazy">
+                    <figcaption><span class="qual-model"><i class="qual-swatch" aria-hidden="true"></i>CAD-GD + C-REX</span><span class="qual-count">11</span></figcaption>
+                  </figure>
+                </div>
+              </div>
+              <div class="qual-pair" data-model="gdino">
+                <div class="qual-pair-grid">
+                  <figure class="qual-cell is-base">
+                    <img src="static/images/qual/red-bottle-cap__gdino.jpg" alt="GroundingDINO prediction for red bottle cap" loading="lazy">
+                    <figcaption><span class="qual-model"><i class="qual-swatch" aria-hidden="true"></i>GroundingDINO</span><span class="qual-count">12</span></figcaption>
+                  </figure>
+                  <figure class="qual-cell is-ours">
+                    <img src="static/images/qual/red-bottle-cap__gdino-crex.jpg" alt="GroundingDINO with C-REX prediction for red bottle cap" loading="lazy">
+                    <figcaption><span class="qual-model"><i class="qual-swatch" aria-hidden="true"></i>GroundingDINO + C-REX</span><span class="qual-count">6</span></figcaption>
+                  </figure>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="item">
+            <div class="qual-slide">
+              <div class="qual-head">
+                <span class="qual-re">&ldquo;Person standing&rdquo;</span>
+              </div>
+
+              <div class="qual-ref">
+                <div class="qual-pair-grid">
+                  <figure class="qual-cell is-ref">
+                    <img src="static/images/qual/person-standing__image.jpg" alt="Public plaza with groups of people standing and walking" loading="lazy">
+                    <figcaption><span class="qual-model">Input image</span></figcaption>
+                  </figure>
+                  <figure class="qual-cell is-ref">
+                    <img src="static/images/qual/person-standing__gt.jpg" alt="Ground-truth annotation for person standing" loading="lazy">
+                    <figcaption><span class="qual-model">Ground truth</span><span class="qual-count">28</span></figcaption>
+                  </figure>
+                </div>
+              </div>
+              <div class="qual-pair" data-model="grec">
+                <div class="qual-pair-grid">
+                  <figure class="qual-cell is-base">
+                    <img src="static/images/qual/person-standing__grec.jpg" alt="GroundingREC prediction for person standing" loading="lazy">
+                    <figcaption><span class="qual-model"><i class="qual-swatch" aria-hidden="true"></i>GroundingREC</span><span class="qual-count">18</span></figcaption>
+                  </figure>
+                  <figure class="qual-cell is-ours">
+                    <img src="static/images/qual/person-standing__grec-crex.jpg" alt="GroundingREC with C-REX prediction for person standing" loading="lazy">
+                    <figcaption><span class="qual-model"><i class="qual-swatch" aria-hidden="true"></i>GroundingREC + C-REX</span><span class="qual-count">25</span></figcaption>
+                  </figure>
+                </div>
+              </div>
+              <div class="qual-pair" data-model="cadgd">
+                <div class="qual-pair-grid">
+                  <figure class="qual-cell is-base">
+                    <img src="static/images/qual/person-standing__cadgd.jpg" alt="CAD-GD prediction for person standing" loading="lazy">
+                    <figcaption><span class="qual-model"><i class="qual-swatch" aria-hidden="true"></i>CAD-GD</span><span class="qual-count">5</span></figcaption>
+                  </figure>
+                  <figure class="qual-cell is-ours">
+                    <img src="static/images/qual/person-standing__cadgd-crex.jpg" alt="CAD-GD with C-REX prediction for person standing" loading="lazy">
+                    <figcaption><span class="qual-model"><i class="qual-swatch" aria-hidden="true"></i>CAD-GD + C-REX</span><span class="qual-count">13</span></figcaption>
+                  </figure>
+                </div>
+              </div>
+              <div class="qual-pair" data-model="gdino">
+                <div class="qual-pair-grid">
+                  <figure class="qual-cell is-base">
+                    <img src="static/images/qual/person-standing__gdino.jpg" alt="GroundingDINO prediction for person standing" loading="lazy">
+                    <figcaption><span class="qual-model"><i class="qual-swatch" aria-hidden="true"></i>GroundingDINO</span><span class="qual-count">7</span></figcaption>
+                  </figure>
+                  <figure class="qual-cell is-ours">
+                    <img src="static/images/qual/person-standing__gdino-crex.jpg" alt="GroundingDINO with C-REX prediction for person standing" loading="lazy">
+                    <figcaption><span class="qual-model"><i class="qual-swatch" aria-hidden="true"></i>GroundingDINO + C-REX</span><span class="qual-count">27</span></figcaption>
+                  </figure>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="item">
+            <div class="qual-slide is-square">
+              <div class="qual-head">
+                <span class="qual-re">&ldquo;Nail polish in the top layer&rdquo;</span>
+              </div>
+
+              <div class="qual-ref">
+                <div class="qual-pair-grid">
+                  <figure class="qual-cell is-ref">
+                    <img src="static/images/qual/nail-polish__image.jpg" alt="Display rack filled with rows of nail polish bottles" loading="lazy">
+                    <figcaption><span class="qual-model">Input image</span></figcaption>
+                  </figure>
+                  <figure class="qual-cell is-ref">
+                    <img src="static/images/qual/nail-polish__gt.jpg" alt="Ground-truth annotation for nail polish in the top layer" loading="lazy">
+                    <figcaption><span class="qual-model">Ground truth</span><span class="qual-count">14</span></figcaption>
+                  </figure>
+                </div>
+              </div>
+              <div class="qual-pair" data-model="grec">
+                <div class="qual-pair-grid">
+                  <figure class="qual-cell is-base">
+                    <img src="static/images/qual/nail-polish__grec.jpg" alt="GroundingREC prediction for nail polish in the top layer" loading="lazy">
+                    <figcaption><span class="qual-model"><i class="qual-swatch" aria-hidden="true"></i>GroundingREC</span><span class="qual-count">13</span></figcaption>
+                  </figure>
+                  <figure class="qual-cell is-ours">
+                    <img src="static/images/qual/nail-polish__grec-crex.jpg" alt="GroundingREC with C-REX prediction for nail polish in the top layer" loading="lazy">
+                    <figcaption><span class="qual-model"><i class="qual-swatch" aria-hidden="true"></i>GroundingREC + C-REX</span><span class="qual-count">14</span></figcaption>
+                  </figure>
+                </div>
+              </div>
+              <div class="qual-pair" data-model="cadgd">
+                <div class="qual-pair-grid">
+                  <figure class="qual-cell is-base">
+                    <img src="static/images/qual/nail-polish__cadgd.jpg" alt="CAD-GD prediction for nail polish in the top layer" loading="lazy">
+                    <figcaption><span class="qual-model"><i class="qual-swatch" aria-hidden="true"></i>CAD-GD</span><span class="qual-count">3</span></figcaption>
+                  </figure>
+                  <figure class="qual-cell is-ours">
+                    <img src="static/images/qual/nail-polish__cadgd-crex.jpg" alt="CAD-GD with C-REX prediction for nail polish in the top layer" loading="lazy">
+                    <figcaption><span class="qual-model"><i class="qual-swatch" aria-hidden="true"></i>CAD-GD + C-REX</span><span class="qual-count">11</span></figcaption>
+                  </figure>
+                </div>
+              </div>
+              <div class="qual-pair" data-model="gdino">
+                <div class="qual-pair-grid">
+                  <figure class="qual-cell is-base">
+                    <img src="static/images/qual/nail-polish__gdino.jpg" alt="GroundingDINO prediction for nail polish in the top layer" loading="lazy">
+                    <figcaption><span class="qual-model"><i class="qual-swatch" aria-hidden="true"></i>GroundingDINO</span><span class="qual-count">7</span></figcaption>
+                  </figure>
+                  <figure class="qual-cell is-ours">
+                    <img src="static/images/qual/nail-polish__gdino-crex.jpg" alt="GroundingDINO with C-REX prediction for nail polish in the top layer" loading="lazy">
+                    <figcaption><span class="qual-model"><i class="qual-swatch" aria-hidden="true"></i>GroundingDINO + C-REX</span><span class="qual-count">14</span></figcaption>
+                  </figure>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ RESULTS ============================ -->
+  <section class="section hero">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3 has-text-centered">Results</h2>
+      <p class="section-lead">
+        We integrate C-REX into GroundingREC, CAD-GD and a detection-based GroundingDINO baseline, with Swin-T and Swin-B
+        backbones. It improves performance across models, backbones and metrics.
+      </p>
+
+      <h3 class="title is-5">REC-8K</h3>
+      <div class="crex-table-wrap">
+        <table class="crex-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th class="crex-method" rowspan="2">Method</th>
+              <th class="crex-group" colspan="5">Validation set</th>
+              <th class="crex-group" colspan="5">Test set</th>
+            </tr>
+            <tr>
+              <th></th>
+              <th>MAE <span class="crex-arrow">&darr;</span></th>
+              <th>RMSE <span class="crex-arrow">&darr;</span></th>
+              <th>Prec <span class="crex-arrow">&uarr;</span></th>
+              <th>Rec <span class="crex-arrow">&uarr;</span></th>
+              <th>F1 <span class="crex-arrow">&uarr;</span></th>
+              <th>MAE <span class="crex-arrow">&darr;</span></th>
+              <th>RMSE <span class="crex-arrow">&darr;</span></th>
+              <th>Prec <span class="crex-arrow">&uarr;</span></th>
+              <th>Rec <span class="crex-arrow">&uarr;</span></th>
+              <th>F1 <span class="crex-arrow">&uarr;</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="crex-backbone" rowspan="8"><span>Swin-T</span></td>
+              <td class="crex-method">GrREC</td>
+              <td>6.80</td><td>18.13</td><td>0.65</td><td>0.71</td><td>0.68</td>
+              <td>6.50</td><td>19.79</td><td>0.67</td><td>0.72</td><td>0.69</td>
+            </tr>
+            <tr class="crex-ours crex-block-end">
+              <td class="crex-method">&nbsp;&nbsp;+ C-REX</td>
+              <td>4.74</td><td>14.50</td><td>0.70</td><td>0.71</td><td>0.71</td>
+              <td>4.91</td><td>18.87</td><td>0.71</td><td>0.72</td><td>0.72</td>
+            </tr>
+            <tr>
+              <td class="crex-method">CAD-GD</td>
+              <td>6.33</td><td>15.90</td><td>0.65</td><td>0.69</td><td>0.67</td>
+              <td>6.25</td><td>18.91</td><td>0.67</td><td>0.70</td><td>0.69</td>
+            </tr>
+            <tr class="crex-ours crex-block-end">
+              <td class="crex-method">&nbsp;&nbsp;+ C-REX</td>
+              <td>5.98</td><td>14.84</td><td>0.66</td><td>0.70</td><td>0.68</td>
+              <td>5.97</td><td>17.37</td><td>0.67</td><td>0.73</td><td>0.70</td>
+            </tr>
+            <tr>
+              <td class="crex-method">CAD-GD<sup>&dagger;</sup></td>
+              <td>4.65</td><td>12.87</td><td>0.65</td><td>0.69</td><td>0.67</td>
+              <td>4.81</td><td>15.02</td><td>0.67</td><td>0.70</td><td>0.69</td>
+            </tr>
+            <tr class="crex-ours crex-block-end">
+              <td class="crex-method">&nbsp;&nbsp;+ C-REX</td>
+              <td>4.70</td><td>13.78</td><td>0.66</td><td>0.70</td><td>0.68</td>
+              <td>4.61</td><td><b>14.71</b></td><td>0.67</td><td>0.73</td><td>0.70</td>
+            </tr>
+            <tr>
+              <td class="crex-method">GrDINO</td>
+              <td>5.92</td><td>17.09</td><td>0.65</td><td>0.65</td><td>0.65</td>
+              <td>5.90</td><td>19.73</td><td>0.68</td><td>0.68</td><td>0.68</td>
+            </tr>
+            <tr class="crex-ours crex-section-end">
+              <td class="crex-method">&nbsp;&nbsp;+ C-REX</td>
+              <td><b>4.26</b></td><td><b>12.89</b></td><td><b>0.75</b></td><td><b>0.72</b></td><td><b>0.73</b></td>
+              <td><b>4.38</b></td><td>17.93</td><td><b>0.76</b></td><td><b>0.74</b></td><td><b>0.75</b></td>
+            </tr>
+
+            <tr>
+              <td class="crex-backbone" rowspan="8"><span>Swin-B</span></td>
+              <td class="crex-method">GrREC</td>
+              <td>5.66</td><td>15.24</td><td>0.66</td><td>0.77</td><td>0.71</td>
+              <td>5.42</td><td>18.47</td><td>0.71</td><td>0.69</td><td>0.70</td>
+            </tr>
+            <tr class="crex-ours crex-block-end">
+              <td class="crex-method">&nbsp;&nbsp;+ C-REX</td>
+              <td>4.57</td><td>14.22</td><td>0.72</td><td>0.72</td><td>0.72</td>
+              <td>4.58</td><td>18.07</td><td>0.74</td><td>0.72</td><td>0.73</td>
+            </tr>
+            <tr>
+              <td class="crex-method">CAD-GD</td>
+              <td>5.31</td><td>13.68</td><td>0.70</td><td>0.73</td><td>0.72</td>
+              <td>5.36</td><td>16.14</td><td>0.73</td><td>0.73</td><td>0.73</td>
+            </tr>
+            <tr class="crex-ours crex-block-end">
+              <td class="crex-method">&nbsp;&nbsp;+ C-REX</td>
+              <td>5.06</td><td>12.73</td><td>0.70</td><td>0.74</td><td>0.72</td>
+              <td>5.02</td><td>15.09</td><td>0.72</td><td>0.74</td><td>0.73</td>
+            </tr>
+            <tr>
+              <td class="crex-method">CAD-GD<sup>&dagger;</sup></td>
+              <td>4.40</td><td><b>12.20</b></td><td>0.70</td><td>0.73</td><td>0.72</td>
+              <td>4.58</td><td>13.81</td><td>0.73</td><td>0.73</td><td>0.73</td>
+            </tr>
+            <tr class="crex-ours crex-block-end">
+              <td class="crex-method">&nbsp;&nbsp;+ C-REX</td>
+              <td>4.38</td><td>12.43</td><td>0.70</td><td>0.74</td><td>0.72</td>
+              <td>4.49</td><td><b>13.21</b></td><td>0.72</td><td>0.74</td><td>0.73</td>
+            </tr>
+            <tr>
+              <td class="crex-method">GrDINO</td>
+              <td>4.58</td><td>14.64</td><td>0.70</td><td>0.76</td><td>0.73</td>
+              <td>4.64</td><td>17.58</td><td>0.72</td><td>0.76</td><td>0.74</td>
+            </tr>
+            <tr class="crex-ours">
+              <td class="crex-method">&nbsp;&nbsp;+ C-REX</td>
+              <td><b>4.00</b></td><td>14.49</td><td><b>0.78</b></td><td><b>0.76</b></td><td><b>0.77</b></td>
+              <td><b>4.20</b></td><td>16.76</td><td><b>0.79</b></td><td><b>0.77</b></td><td><b>0.78</b></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="crex-tablenote">
+        Results on REC-8K. GrREC and GrDINO are GroundingREC and GroundingDINO. GroundingREC results come from the released
+        models; CAD-GD is retrained on REC-8K with the authors&rsquo; public code, since no pre-trained models are available.
+        CAD-GD<sup>&dagger;</sup> uses the alternative positive-detection strategy, selecting the top&nbsp;<em>N</em> tokens by density
+        map estimate rather than a static threshold. Best result per backbone in <b>bold</b>; rows with C-REX are highlighted.
+      </p>
+
+      <details class="crex-collapse" open>
+        <summary class="crex-collapse-summary">
+          <span class="crex-collapse-chevron" aria-hidden="true"></span>
+          <h3 class="title is-5">Performance across count ranges</h3>
+        </summary>
+        <div class="crex-collapse-body">
+          <figure class="crex-figure">
+            <img src="static/images/count_range_plot.png"
+                 alt="Grouped bar charts of MAE and RMSE for each baseline model and its C-REX counterpart, binned by object count range on REC-8K, with the number of samples shown below each bin.">
+            <figcaption class="crex-caption">
+              Each baseline REC model compared to its C-REX counterpart across object count ranges on REC-8K; sample counts are
+              shown below each bin. In most cases C-REX yields lower MAE and RMSE, showing consistent improvements across low-,
+              mid- and high-density conditions.
+            </figcaption>
+          </figure>
+        </div>
+      </details>
+
+      <details class="crex-collapse" open>
+        <summary class="crex-collapse-summary">
+          <span class="crex-collapse-chevron" aria-hidden="true"></span>
+          <h3 class="title is-5">Class-agnostic counting on FSC-147</h3>
+        </summary>
+        <div class="crex-collapse-body">
+      <div class="crex-table-wrap">
+        <table class="crex-table">
+          <thead>
+            <tr>
+              <th class="crex-method" rowspan="2">Method</th>
+              <th class="crex-group" colspan="2">Val set</th>
+              <th class="crex-group" colspan="2">Test set</th>
+            </tr>
+            <tr>
+              <th>MAE <span class="crex-arrow">&darr;</span></th>
+              <th>RMSE <span class="crex-arrow">&darr;</span></th>
+              <th>MAE <span class="crex-arrow">&darr;</span></th>
+              <th>RMSE <span class="crex-arrow">&darr;</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="crex-method">ZSC</td><td>26.93</td><td>88.63</td><td>22.09</td><td>115.17</td></tr>
+            <tr><td class="crex-method">CounTX</td><td>17.10</td><td>65.61</td><td>15.88</td><td>106.29</td></tr>
+            <tr><td class="crex-method">CountGD</td><td>12.14</td><td><b>47.51</b></td><td>14.76</td><td>120.42</td></tr>
+            <tr class="crex-section-end"><td class="crex-method">DAVE</td><td>15.48</td><td>52.57</td><td>14.90</td><td>103.42</td></tr>
+
+            <tr><td class="crex-method">CAD-GD</td><td>13.80</td><td>64.74</td><td>12.15</td><td>99.87</td></tr>
+            <tr class="crex-ours crex-block-end"><td class="crex-method">&nbsp;&nbsp;+ C-REX</td><td>13.86</td><td>61.04</td><td>11.90</td><td><b>99.65</b></td></tr>
+            <tr><td class="crex-method">GroundingDINO</td><td>9.71</td><td>55.11</td><td>10.73</td><td>103.79</td></tr>
+            <tr class="crex-ours crex-block-end"><td class="crex-method">&nbsp;&nbsp;+ C-REX</td><td><b>9.42</b></td><td>54.74</td><td><b>10.04</b></td><td>102.35</td></tr>
+            <tr><td class="crex-method">GroundingREC</td><td>10.06</td><td>58.62</td><td>10.12</td><td>107.19</td></tr>
+            <tr class="crex-ours"><td class="crex-method">&nbsp;&nbsp;+ C-REX</td><td>9.66</td><td>54.07</td><td>12.46</td><td>104.53</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="crex-tablenote">
+        Results on FSC-147 using only textual information (class names) to guide counting. For all models except CAD-GD and
+        GroundingDINO we report results from their original papers. Best results in <b>bold</b>.
+      </p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============================ BIBTEX ============================ -->
+  <section class="section" id="BibTeX">
+    <div class="container is-max-desktop content">
+      <div class="bibtex-header">
+        <h2 class="title">BibTeX</h2>
+        <button class="copy-bibtex-btn" onclick="copyBibTeX()" title="Copy BibTeX to clipboard">
+          <i class="fas fa-copy"></i>
+          <span class="copy-text">Copy</span>
+        </button>
+      </div>
+      <pre id="bibtex-code"><code>@inproceedings{triaridis2026crex,
+  title     = {What is the Right Embedding Space for Contrastive Learning in
+               Referring Expression Counting?},
+  author    = {Triaridis, Kostas and Kaliosis, Panagiotis and Nguyen, E-Ro and
+               Xu, Jingyi and Samaras, Dimitris and Le, Hieu},
+  booktitle = {European Conference on Computer Vision (ECCV)},
+  year      = {2026}
+}</code></pre>
+    </div>
+  </section>
+
+  <!-- ============================ ACKNOWLEDGEMENTS ============================ -->
+  <section class="section" style="padding-top:0;">
+    <div class="container is-max-desktop content">
+      <h2 class="title is-5">Acknowledgements</h2>
+      <p class="crex-ack">
+        This research was partially supported by NSF grants IIS-2123920 and IIS-2212046, and by the CCI startup fund at
+        UNC Charlotte.
+      </p>
+    </div>
+  </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="columns is-centered">
+        <div class="column is-8">
+          <div class="content">
+            <p>
+              This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank" rel="noopener">Academic Project Page Template</a> which was adopted from the <a href="https://nerfies.github.io" target="_blank" rel="noopener">Nerfies</a> project page.
+              You are free to borrow the source code of this website, we just ask that you link back to this page in the footer. <br> This website is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
+              Commons Attribution-ShareAlike 4.0 International License</a>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
 
 </body>
 </html>

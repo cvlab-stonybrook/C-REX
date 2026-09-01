@@ -1,0 +1,401 @@
+/* C-REX project page — additions on top of the template's index.css */
+
+:root {
+  --crex-accent: #1f6feb;
+  --crex-good: #157347;
+  --crex-bad: #9a3412;
+  --crex-rule: #e3e6ea;
+  --crex-muted: #667085;
+  --crex-highlight: #eef4ff;
+}
+
+.publication-title { line-height: 1.18; }
+/* ECCV conference logo, centred above the paper title. */
+.crex-venue-row {
+  display: flex;
+  justify-content: center;
+  margin: 0.15rem 0 1.1rem;
+}
+.crex-eccv-logo {
+  width: 330px;
+  height: auto;
+  flex: 0 0 auto;
+}
+@media screen and (max-width: 620px) {
+  .crex-eccv-logo { width: 235px; }
+}
+.author-block a { border-bottom: 1px solid transparent; }
+.author-block a:hover { border-bottom-color: currentColor; }
+.crex-orcid { font-size: 0.72em; vertical-align: super; opacity: 0.65; }
+
+/* ---- figures ---- */
+.crex-figure { margin: 0; }
+.crex-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--crex-rule);
+  border-radius: 8px;
+  background: #fff;
+}
+.crex-caption {
+  margin-top: 0.85rem;
+  color: var(--crex-muted);
+  font-size: 0.94rem;
+  line-height: 1.55;
+  text-align: left;
+}
+.crex-caption b, .crex-caption strong { color: #344054; }
+
+/* ---- results tables ---- */
+.crex-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 0 0.9rem;
+  border: 1px solid var(--crex-rule);
+  border-radius: 8px;
+  background: #fff;
+}
+table.crex-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+table.crex-table th,
+table.crex-table td {
+  padding: 0.42rem 0.7rem;
+  text-align: center;
+  border: none;
+}
+table.crex-table thead th {
+  font-weight: 700;
+  color: #344054;
+  border-bottom: 1px solid #cfd4dc;
+}
+table.crex-table thead tr:first-child th { border-bottom: 1px solid var(--crex-rule); }
+table.crex-table th.crex-group { font-size: 0.82rem; letter-spacing: 0.03em; text-transform: uppercase; color: var(--crex-muted); }
+table.crex-table td.crex-method,
+table.crex-table th.crex-method { text-align: left; white-space: nowrap; }
+/* Rotate an absolutely-positioned inner span rather than using writing-mode:
+   Safari does not apply writing-mode reliably to table cells, which left these
+   labels upside down there while Chrome rendered them correctly. Absolute
+   positioning keeps the rotated text out of flow so the cell stays narrow.
+   rotate(90deg) is clockwise, so the label reads top-to-bottom. */
+table.crex-table td.crex-backbone {
+  position: relative;
+  width: 2.1rem;
+  min-width: 2.1rem;
+  padding: 0;
+  border-right: 1px solid var(--crex-rule);
+}
+table.crex-table td.crex-backbone > span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(90deg);
+  transform-origin: center;
+  white-space: nowrap;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--crex-muted);
+}
+table.crex-table tr.crex-ours { background: var(--crex-highlight); }
+table.crex-table tr.crex-ours td.crex-method { font-weight: 600; }
+table.crex-table tr.crex-block-end td { border-bottom: 1px dashed #d0d5dd; }
+table.crex-table tr.crex-section-end td { border-bottom: 1px solid #cfd4dc; }
+table.crex-table b { color: #101828; }
+.crex-arrow { font-size: 0.78em; color: var(--crex-muted); font-weight: 400; }
+.crex-tablenote {
+  color: var(--crex-muted);
+  font-size: 0.88rem;
+  line-height: 1.55;
+  text-align: left;
+  margin-bottom: 2.2rem;
+}
+
+/* ---- qualitative carousel ----
+   Full-bleed so each panel renders at roughly its native 760px rather than the
+   ~220px it got inside the 960px desktop container. */
+.qual-container {
+  /* Deliberately NOT Bulma's .container: its .container:not(...):not(...) rule
+     is more specific than a single class and would clamp this back to 1344px. */
+  width: 100%;
+  max-width: min(1200px, 96vw);
+  margin: 0 auto;
+  padding: 0 0.75rem;
+}
+.results-carousel .item { padding: 0 0.4rem; }
+/* Every panel renders at the size the reference row used to have (~515px).
+   Capping the slide keeps the reference row and the model pairs identical,
+   since both resolve their columns from the same width. */
+.qual-slide { max-width: 1090px; margin: 0 auto; }
+/* Sized so the square panels come out the same HEIGHT as the 16:9 panels on the
+   other slides (1090px slide -> 519px wide -> 292px tall; 640px slide -> ~292px
+   square). The carousel sizes itself to its tallest slide, so an oversized square
+   slide left ~370px of dead space under every other slide. */
+.qual-slide.is-square { max-width: 640px; }
+
+.qual-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 1.4rem;
+}
+.qual-re { font-size: 1.5rem; font-weight: 700; color: #101828; }
+
+/* Reference row mirrors the pair card's box model exactly (same 4px border and
+   padding), so Input / Ground truth render at the same size as the model panels
+   and line up column-for-column with them. */
+.qual-ref {
+  border-left: 4px solid transparent;
+  border-radius: 8px;
+  padding: 0.9rem 1rem 0.6rem;
+  margin-bottom: 1rem;
+}
+
+/* One card per model, carrying that model's colour pair. */
+.qual-pair {
+  --m-dark: #667085;
+  --m-light: #cfd4dc;
+  --m-tint: #f7f8fa;
+  background: var(--m-tint);
+  border-left: 4px solid var(--m-dark);
+  border-radius: 8px;
+  padding: 0.9rem 1rem 0.6rem;
+  margin-bottom: 1rem;
+}
+/* Colours sampled from the paper's own count-range bar chart. */
+.qual-pair[data-model="grec"]  { --m-dark: #1b7f3a; --m-light: #7ed957; --m-tint: #eff7f1; }
+.qual-pair[data-model="cadgd"] { --m-dark: #6a0dad; --m-light: #c084e8; --m-tint: #f6eefc; }
+.qual-pair[data-model="gdino"] { --m-dark: #0d47a1; --m-light: #64b5f6; --m-tint: #eaf1fb; }
+
+.qual-pair-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.qual-cell { margin: 0; }
+.qual-cell img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  /* Four columns are 16:9; the "nail polish" panels are square. contain keeps
+     every prediction visible instead of cropping the square ones. */
+  object-fit: contain;
+  border-radius: 6px;
+  border: 1px solid var(--crex-rule);
+  background: #fff;
+}
+
+/* The "nail polish" panels are square, not 16:9. Give that slide its own ratio
+   so contain has nothing to letterbox, and cap the width so it stays in scale. */
+.qual-slide.is-square .qual-cell img { aspect-ratio: 1 / 1; }
+
+.qual-pair .qual-cell.is-base img { border-color: var(--m-dark); }
+.qual-pair .qual-cell.is-ours img { border: 2px solid var(--m-light); }
+
+.qual-cell figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.5rem 0.7rem;
+  margin-top: 0.5rem;
+  font-size: 0.92rem;
+  line-height: 1.3;
+}
+.qual-model {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42em;
+  font-weight: 600;
+  color: #344054;
+}
+.qual-swatch {
+  width: 0.78em;
+  height: 0.78em;
+  border-radius: 3px;
+  background: var(--crex-rule);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  flex: 0 0 auto;
+}
+.qual-cell.is-base .qual-swatch { background: var(--m-dark); }
+.qual-cell.is-ours .qual-swatch { background: var(--m-light); }
+.qual-cell.is-ours .qual-model { color: #101828; }
+
+.qual-count { font-weight: 700; font-size: 1.05rem; color: #101828; font-variant-numeric: tabular-nums; }
+
+@media screen and (max-width: 760px) {
+  .qual-re { font-size: 1.15rem; }
+  .qual-pair { padding: 0.7rem 0.6rem 0.4rem; }
+  .qual-pair-grid { gap: 0.6rem; }
+  .qual-cell figcaption { font-size: 0.8rem; gap: 0.3rem 0.5rem; }
+  .qual-count { font-size: 0.95rem; }
+  /* Two columns on a phone would be ~175px per panel — smaller than what we
+     started with. Stack instead: the pair stays adjacent, just vertically. */
+  .qual-pair-grid { grid-template-columns: 1fr; }
+}
+
+/* Slides are tall now, so the default vertically-centred arrows would sit far
+   below the fold. Pin them beside the slide heading instead. */
+.results-carousel .slider-navigation-previous,
+.results-carousel .slider-navigation-next {
+  z-index: 5;
+  top: 1.6rem;
+  transform: none;
+  background: #fff;
+  border: 1px solid var(--crex-rule);
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.09);
+}
+.results-carousel .slider-navigation-previous:hover,
+.results-carousel .slider-navigation-next:hover { border-color: var(--crex-accent); }
+.section-lead {
+  color: var(--crex-muted);
+  font-size: 1rem;
+  line-height: 1.6;
+  max-width: 46rem;
+  margin: -0.4rem auto 1.6rem;
+  text-align: center;
+}
+.crex-ack {
+  color: var(--crex-muted);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+/* ---- collapsible result subsections ----
+   Native <details>, so it works with no JS and stays keyboard-accessible. */
+.crex-collapse {
+  margin-top: 2.4rem;
+  border-top: 1px solid var(--crex-rule);
+}
+.crex-collapse:first-of-type { margin-top: 2rem; }
+
+.crex-collapse-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.9rem 0.2rem;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;            /* Firefox: hide default triangle */
+  border-radius: 6px;
+}
+.crex-collapse-summary::-webkit-details-marker { display: none; }  /* Safari/Chrome */
+.crex-collapse-summary:hover .title { color: var(--crex-accent); }
+.crex-collapse-summary:focus-visible {
+  outline: 2px solid var(--crex-accent);
+  outline-offset: 2px;
+}
+.crex-collapse-summary .title {
+  margin-bottom: 0;            /* Bulma .title adds margin we do not want inline */
+  transition: color 0.12s ease;
+}
+
+/* Chevron: points right when collapsed, down when open. */
+.crex-collapse-chevron {
+  flex: 0 0 auto;
+  width: 0.55em;
+  height: 0.55em;
+  border-right: 2px solid var(--crex-muted);
+  border-bottom: 2px solid var(--crex-muted);
+  transform: rotate(-45deg);
+  transition: transform 0.15s ease;
+  margin-left: 0.15em;
+}
+.crex-collapse[open] > .crex-collapse-summary .crex-collapse-chevron {
+  transform: rotate(45deg);
+  margin-left: 0;
+}
+
+.crex-collapse-body { padding-top: 0.6rem; }
+.crex-collapse-body > .crex-tablenote:last-child { margin-bottom: 0.8rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .crex-collapse-chevron,
+  .crex-collapse-summary .title { transition: none; }
+}
+
+/* ---- abstract: short lead + collapsible full text ---- */
+.crex-abstract-section { padding-top: 2.6rem; padding-bottom: 2.6rem; }
+
+/* Hold the full abstract at a readable measure even though its column is
+   full width — justified text this long gets rivers of whitespace if it runs wider. */
+.crex-abstract-full {
+  max-width: 48rem;
+  margin: 0 auto;
+}
+
+/* The single high-level Method paragraph needs air between it and the figure caption. */
+.crex-method-body { margin-top: 2.2rem; }
+
+/* ---- project logo beside the title ---- */
+.crex-hero-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2.2rem;
+  margin-bottom: 0.4rem;
+}
+/* Left-align the title so it reads as a block against the logo on its right;
+   authors and links below stay centred. */
+.crex-hero-text { text-align: left; }
+.crex-hero-text .publication-title { margin-bottom: 0; }
+.crex-logo {
+  flex: 0 0 auto;
+  width: min(230px, 24vw);
+  height: auto;
+}
+
+@media screen and (max-width: 900px) {
+  /* Not enough room side by side: stack, and re-centre the title. */
+  .crex-hero-row { flex-direction: column; gap: 0.9rem; }
+  .crex-hero-text { text-align: center; }
+  .crex-logo { order: -1; width: min(180px, 46vw); }
+}
+
+/* ---- typography: San Francisco on Apple devices ----
+   SF Pro cannot be served as a webfont (Apple's licence limits it to Apple-platform
+   UI work), but the system stack resolves to the locally installed SF Pro on macOS
+   and iOS. Inter sits next in the stack as the closest open substitute for everyone
+   else, so the page looks consistent off Apple hardware too.
+   These selectors mirror the ones index.css sets Inter on; several of those use
+   !important, so these must too. Deliberately NOT a blanket `*` rule: that would
+   clobber the academicons font-family and break the arXiv glyph. */
+:root {
+  --crex-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
+               "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+  --crex-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco,
+               "Cascadia Code", "Roboto Mono", monospace;
+}
+
+body,
+button, input, select, textarea,
+.teaser,
+.title, .subtitle,
+.publication-title,
+.publication-authors,
+.title.is-3,
+.publication-links .button,
+.content,
+table.crex-table,
+.crex-caption, .crex-tablenote, .section-lead, .crex-ack,
+.qual-re, .qual-model, .qual-count,
+.crex-venue, .crex-collapse-summary {
+  font-family: var(--crex-font) !important;
+}
+
+/* Keep code monospaced — the rule above must not reach it. */
+pre, code, pre code, #bibtex-code, #bibtex-code code {
+  font-family: var(--crex-mono) !important;
+}
+
+/* SF is a touch tighter than Inter at display sizes. */
+.publication-title { letter-spacing: -0.021em; }
+.title.is-3 { letter-spacing: -0.015em; }
