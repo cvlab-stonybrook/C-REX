@@ -15,9 +15,9 @@ C-REX is a drop-in replacement for the contrastive loss in any REC architecture.
 
 Each baseline is a **self-contained** codebase with its own environment, configs, training/inference scripts, and README:
 
-- [`GroundingDINO/`](GroundingDINO/README.md) — our own detection-based baseline built on GroundingDINO, with C-REX added alongside the standard counting losses
-- [`GroundingREC/`](GroundingREC/README.md) — [Dai et al., CVPR 2024](https://github.com/sydai/referring-expression-counting), with its image-text contrastive loss replaced by C-REX
-- [`CAD-GD/`](CAD-GD/README.md) — [Wang et al., CVPR 2025](https://arxiv.org/abs/2503.12460), with its image-text contrastive loss replaced by C-REX
+- [`src/GroundingDINO/`](src/GroundingDINO/README.md) — our own detection-based baseline built on GroundingDINO, with C-REX added alongside the standard counting losses
+- [`src/GroundingREC/`](src/GroundingREC/README.md) — [Dai et al., CVPR 2024](https://github.com/sydai/referring-expression-counting), with its image-text contrastive loss replaced by C-REX
+- [`src/CAD-GD/`](src/CAD-GD/README.md) — [Wang et al., CVPR 2025](https://arxiv.org/abs/2503.12460), with its image-text contrastive loss replaced by C-REX
 
 See each folder's README for setup, data preparation, training, and evaluation instructions specific to that baseline.
 
