@@ -19,7 +19,7 @@ Download the pretrained GroundingDINO Swin-T / Swin-B checkpoints from the [offi
 
 ## Data
 
-Same REC-8K / FSC-147 sources as the other baselines (see `../GroundingDINO/README.md`). CAD-GD additionally requires precomputed density maps — see `utils/create_density_maps.py` (update the `anno_path`/`image_root`/`output_root` constants at the top of the file for your layout, following [Lempitsky & Zisserman, 2010]).
+Same REC-8K / FSC-147 sources as the other baselines (see `../GroundingDINO_C-REX/README.md`). CAD-GD additionally requires precomputed density maps — see `utils/create_density_maps.py` (update the `anno_path`/`image_root`/`output_root` constants at the top of the file for your layout, following [Lempitsky & Zisserman, 2010]).
 
 Expected layout (relative to this directory):
 - `datasets/rec-8k/annotations.json`, `datasets/rec-8k/splits.json`

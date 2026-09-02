@@ -8,7 +8,7 @@ This corresponds to the "GrREC" rows in Table 1 (REC-8K) and Table 2 (FSC-147) o
 
 ## Setup
 
-Same as `../GroundingDINO/README.md`:
+Same as `../GroundingDINO_C-REX/README.md`:
 
 ```bash
 conda create -n crex-grec python=3.9 -y
@@ -19,7 +19,7 @@ python setup.py build_ext --inplace
 
 ## Data
 
-Same REC-8K / FSC-147 layout as `../GroundingDINO/README.md`.
+Same REC-8K / FSC-147 layout as `../GroundingDINO_C-REX/README.md`.
 
 ## Checkpoints and baselines
 
